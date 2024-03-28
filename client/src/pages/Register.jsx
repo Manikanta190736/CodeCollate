@@ -1,139 +1,87 @@
-import { useState } from "react";
-import {useNavigate} from "react-router-dom";
-import { useAuth } from "../store/auth";
+import React, { useState } from 'react';
+import './Register.css';  
 
-export const Register = ()=>{
+const Register = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    course: ''
+  });
 
-    const [user, setUser] = useState({
-        username: "",
-        email: "",
-        phone: "",
-        password: "",
-      });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
-      
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
 
-      const navigate= useNavigate();
-      const {storetokenInLS} = useAuth();
-
-      const handleInput = (e) => {
-        console.log(e);
-        let name = e.target.name;
-        let value = e.target.value;
-    
-        setUser({
-          ...user,
-          [name]: value,
-        });
-      };
-
-      //handling form submission
-
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log(user);
-    
-        try {
-          const response = await fetch("http://localhost:4002/api/auth/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(user),
-          });
-           
-          if (response.ok) {
-            const res_data = await response.json();
-            console.log("res from server",res_data);
-            storetokenInLS(res_data.token);
-            setUser({ username: "", email: "", phone: "", password: "" });
-            navigate("/login");
-          } 
-          console.log(response);
-        } catch (error) {
-          console.error("register", error);
-        }
-      };
-
-
-
-
-     return <>
-     <section>
-        <main>
-            <div className="section-registration">
-                <div className="container grid grid-two cols">
-                    <div className="registration-image">
-                        <img src="/images/register.png" alt="error" width="500" height="500" />
-                    </div>
-                    
-
-                    <div className="registration-form">
-                        <h1 className="main-heading mb-3">Register</h1>
-                        <br />
-
-                        <form  onSubmit={handleSubmit}>
-                            <div>
-                                <label htmlFor="username">Username</label>
-                                <input 
-                                type="text"
-                                name="username" 
-                                id="username"
-                                autoComplete="off"
-                                value={user.username}
-                                onChange={handleInput}
-                                required
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="email">Email</label>
-                                <input 
-                                type="text"
-                                name="email"  
-                                id="email"
-                                required
-                                autoComplete="off"
-                                value={user.email}
-                                onChange={handleInput}
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="phone">Phone</label>
-                                <input 
-                                type="number"
-                                name="phone"  
-                                id="phone"
-                                required
-                                autoComplete="off"
-                                value={user.phone}
-                                onChange={handleInput}
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="password">Password</label>
-                                <input 
-                                type="text"
-                                name="password" 
-                                id="password"
-                                required
-                                autoComplete="off"
-                                value={user.password}
-                                onChange={handleInput}
-                                />
-                            </div>
-
-                            <br />
-                            <button type="submit" className="btn btn-submit">Register Now</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </main>
-     </section>
-     
-     
-     </>
+  return (
+    <div className="register-container">
+      <div className="registration-image">
+        <img src="/images/register.png"/>
+      </div>
+      <div className="registration-form-container">
+        <form className="register-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <input 
+              type="text" 
+              name="username" 
+              value={formData.firstName} 
+              onChange={handleChange} 
+              placeholder="First Name" 
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <input 
+              type="email" 
+              name="email" 
+              value={formData.email} 
+              onChange={handleChange} 
+              placeholder="Email" 
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <input 
+              type="password" 
+              name="password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              placeholder="Password" 
+              required 
+            />
+          </div>
+          <div className="form-group">
+            <select 
+              name="course" 
+              value={formData.course} 
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Course</option>
+              <option value="CSE">Computer Science & Engineering (CSE)</option>
+              <option value="ECE">Electronics & Communication Engineering (ECE)</option>
+              <option value="EEE">Electrical & Electronics Engineering (EEE)</option>
+              <option value="Mech">Mechanical Engineering (Mech)</option>
+              <option value="Civil">Civil Engineering (Civil)</option>
+              {/* Add more options as needed */}
+            </select>
+          </div>
+          <div className="form-group">
+            <button type="submit">Register</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
+
+export default Register;

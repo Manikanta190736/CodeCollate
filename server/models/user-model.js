@@ -23,12 +23,17 @@ const userSchema= new mongoose.Schema({
         type: Boolean,
         default:false,
     },
+    courses: [{
+      type: String,
+      enum: ['cse', 'ece', 'eee', 'mech', 'civil'], // List of available courses
+    }],
+  collegeName: {
+      type: String,
+      required: true,
+  }
 });
 
-
-//? secure password.   pre method
-// data base me save hone se pehle yeh middleware run hoga then database me entry hogi username,email and all
-
+ 
 userSchema.pre("save", async function () {
   const user = this;
   console.log("actual data ", this);

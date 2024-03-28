@@ -11,33 +11,45 @@ const home = async (req, res) => {
 };
 
  
+  
 
 const register = async (req, res) => {
   try {
-    // const data = req.body;
-    console.log(req.body);
-    const { username, email, phone, password } = req.body;
+    const { firstName, email, password, confirmPassword, course } = req.body;
 
-    const userExist = await User.findOne({ email: email });
-
-    if (userExist) {
-      return res.status(400).json({ msg: "email already exists" });
+    
+    if (password !== confirmPassword) {
+      return res.status(400).json({ msg: "Passwords do not match" });
     }
 
-    const userCreated = await User.create({ username, email, phone, password });
+   
+    const userExist = await User.findOne({ email });
+    if (userExist) {
+      return res.status(400).json({ msg: "Email already exists" });
+    }
 
-    // res.status(201).json({ message: "User registered successfully" });
+    
+    const newUser = new User({
+      firstName,
+      email,
+      password,
+      course
+    });
+
+ 
+    await newUser.save();
+
     res.status(201).json({
       msg: "Registration Successful",
-      token: await userCreated.generateToken(),
-      userId: userCreated._id.toString(),
+      userId: newUser._id
     });
   } catch (error) {
-    //res.status(500).json({ message: "Internal server error" });
-    next(error);
+    console.error("Registration failed:", error);
+    res.status(500).json({ msg: "Internal server error" });
   }
 };
 
+ 
  
 
 
@@ -51,7 +63,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // const user = await bcrypt.compare(password, userExist.password);
+    
     const user= await userExist.comparePassword(password);
 
     if (user) {
@@ -69,7 +81,7 @@ const login = async (req, res) => {
 };
 
 
-// contact 
+ 
 
 
 

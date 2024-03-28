@@ -8,7 +8,7 @@ export const Contact = () => {
     
   });
 
-  // lets tackle our handleInput
+   
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -32,13 +32,13 @@ export const Contact = () => {
         <div className="contact-content container">
           <h1 className="main-heading">Contact Me</h1>
         </div>
-        {/* contact page main  */}
+        
         <div className="container grid grid-two-cols">
           <div className="contact-img">
             <img src="/images/support.png" alt="we are always ready to help" />
           </div>
 
-          {/* contact form content actual  */}
+          
           <section className="section-form">
             <form onSubmit={handleSubmit}>
               <div>

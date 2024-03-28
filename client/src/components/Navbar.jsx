@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";    // it determine weather the path or root is active,pending or transitioning
+import { NavLink } from "react-router-dom";    
 import "./Navbar.css"
 import { useAuth } from "../store/auth";
 

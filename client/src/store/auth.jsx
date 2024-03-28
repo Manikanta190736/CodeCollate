@@ -1,31 +1,57 @@
-import {createContext, useContext, useState} from "react";
-
+import {createContext, useContext, useEffect, useState} from "react";
 export const AuthContext = createContext();
 
-export const  AuthProvider = ({children}) =>{
+export const AuthProvider = ({ children }) => {
+    const [token, setToken] = useState(localStorage.getItem("token"));
+    const [user, setUser] = useState("");
 
-    const [token,setToken ]= useState(localStorage.getItem("token"));
-
-
-    const storetokenInLS = (serverToken)=>{
-        return localStorage.setItem('token',serverToken);
-
+    const storetokenInLS = (serverToken) => {
+        localStorage.setItem("token", serverToken);
+        setToken(serverToken); // Update token state
     };
 
     let isLoggedIn = !!token;
-    console.log('isLoggedIn', isLoggedIn);
+    console.log("isLoggedIn", isLoggedIn);
 
     //logout functionality
-
-    const  LogoutUser= () =>{
+    const LogoutUser = () => {
         setToken("");
-        return localStorage.removeItem("token");
+        localStorage.removeItem("token");
     };
-    return( <AuthContext.Provider value={{ isLoggedIn,storetokenInLS,LogoutUser}}>
-        {children}
-    </AuthContext.Provider>
+
+    // JWT Authentication - to get the user data
+    async function userAuthentication() {
+        try {
+            const response = await fetch("http://localhost:4002/api/auth/user", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`, // Fix interpolation
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("user data", data.userData);
+                setUser(data.userData);
+            } else {
+                throw new Error("Server Response Not OK");
+            }
+        } catch (error) {
+            console.log("error fetching data");
+        }
+    }
+
+    useEffect(() => {
+        userAuthentication();
+    }, []);
+
+    return (
+        <AuthContext.Provider value={{ isLoggedIn, storetokenInLS, LogoutUser, user }}>
+            {children}
+        </AuthContext.Provider>
     );
 };
+
 
 export const useAuth =() =>{
     const authContextValue = useContext(AuthContext);
@@ -34,3 +60,5 @@ export const useAuth =() =>{
     }
     return authContextValue ;
 };
+
+  
